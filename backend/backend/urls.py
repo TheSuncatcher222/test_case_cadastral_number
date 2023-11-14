@@ -6,5 +6,5 @@ from api.urls import urlpatterns as api_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    include(api_urlpatterns, namespace='api'),
+    path('api/', include(api_urlpatterns)),
 ]
