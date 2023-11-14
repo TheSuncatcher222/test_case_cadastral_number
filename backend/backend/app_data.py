@@ -40,6 +40,8 @@ DATABASE_SQLITE: dict[str, dict[str, str]] = {
     }
 }
 
+RESPONSE_DATA_API_AVAILABLE: dict[str, str] = {'message': 'API функционирует.'}
+
 
 """Models data."""
 
