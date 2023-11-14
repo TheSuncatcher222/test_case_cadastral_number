@@ -23,6 +23,19 @@ def get_query(request):
     Создает запись в БД для модели CadastralNumber.
     Создает задачу для Celery проверить статус созданного кадастрового номера.
     """
+    # INFO: Согласно официальной документации:
+    #       https://docs.djangoproject.com/en/4.2/ref/request-response/#httprequest-objects  # noqa(E303)
+    #       данные хранятся в атрибуте "body", однако доступ к этому аттрибуту
+    #       "однаразовый". При повторном обращении к request.body в
+    #       RequestLoggingMiddleware возникнет следующая ошибка:
+    #           raise RawPostDataException(
+    #               django.http.request.RawPostDataException: You cannot access
+    #               body after reading from request's data stream
+    #       Таким образом появилась необходимость закешировать данные
+    #       в другом аттрибуте объекта httprequest.
+    #       Костыль, не спорю. Но я не нашел пока способа с этим разобраться.
+    request_data: dict = request.data
+    setattr(request._request, '_cached_body', request_data)
     serializer: Serializer = CadastralSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
@@ -38,7 +51,10 @@ def get_result(request):
     # INFO: написал логику самостоятельно ввиду того, что если создавать
     #       сериализатор и проверять number через него - будет два обращения
     #       к базе данных: на этапе валидации, на этапе обращения к объекту.
-    number: str = request.data.get('number', '')
+    # INFO: про _cached_body см. INFO в get_query выше.
+    request_data: dict = request.data
+    setattr(request._request, '_cached_body', request_data)
+    number: str = request_data.get('number', '')
     try:
         validate_cadastral_number(value=number)
     except ValidationError as err:
