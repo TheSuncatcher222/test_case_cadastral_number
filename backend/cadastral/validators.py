@@ -25,7 +25,7 @@ def validate_string(value: str, pattern: str, err: str) -> None:
 def validate_cadastral_number(value: str) -> str:
     """Производит валидацию кадастрового номера."""
     validate_string(
-        value=value,
+        value=str(value),
         pattern=CADASTRAL_NUMBER_PATTERN,
         err=CADASTRAL_NUMBER_ERR,
     )
