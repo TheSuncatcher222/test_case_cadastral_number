@@ -41,6 +41,14 @@ DATABASE_SQLITE: dict[str, dict[str, str]] = {
 }
 
 
+"""Models data."""
+
+
+ADMIN_LIST_PER_PAGE: int = 15
+
+CADASTRAL_NUMBER_LEN: int = 16
+
+
 """Security data."""
 
 
