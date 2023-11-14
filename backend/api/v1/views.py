@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
@@ -14,7 +14,10 @@ from cadastral.validators import validate_cadastral_number
 @api_view(http_method_names=('POST',))
 def check_ping(request):
     """Возвращает статус 200, если сервер успешно функционирует."""
-    return Response(data=RESPONSE_DATA_API_AVAILABLE, status=HTTP_200_OK)
+    return Response(
+        data=RESPONSE_DATA_API_AVAILABLE,
+        status=status.HTTP_200_OK,
+    )
 
 
 @api_view(http_method_names=('POST',))
@@ -40,7 +43,10 @@ def get_query(request):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     # TODO: добавить задачу для Celery отправить запрос на проверку статуса.
-    return Response(data=serializer.data, status=HTTP_200_OK)
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_201_CREATED,
+    )
 
 
 @api_view(http_method_names=('GET',))
@@ -60,7 +66,7 @@ def get_result(request):
     except ValidationError as err:
         return Response(
             data={'number': err},
-            status=HTTP_400_BAD_REQUEST,
+            status=status.HTTP_400_BAD_REQUEST,
         )
     cadastral: CadastralNumber = get_object_or_404(
         CadastralNumber,
@@ -69,5 +75,5 @@ def get_result(request):
     serializer: Serializer = CadastralSerializer(instance=cadastral)
     return Response(
         data=serializer.data,
-        status=HTTP_200_OK,
+        status=status.HTTP_200_OK,
     )
