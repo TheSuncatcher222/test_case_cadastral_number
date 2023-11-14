@@ -1,10 +1,14 @@
-from rest_framework.status import HTTP_200_OK
+from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 from api.v1.serializers import CadastralSerializer
 from backend.app_data import RESPONSE_DATA_API_AVAILABLE
+from cadastral.models import CadastralNumber
+from cadastral.validators import validate_cadastral_number
 
 
 @api_view(http_method_names=('POST',))
@@ -24,3 +28,30 @@ def get_query(request):
     serializer.save()
     # TODO: добавить задачу для Celery отправить запрос на проверку статуса.
     return Response(data=serializer.data, status=HTTP_200_OK)
+
+
+@api_view(http_method_names=('GET',))
+def get_result(request):
+    """
+    Возвращает данные по сообщенному кадастровому номеру.
+    """
+    # INFO: написал логику самостоятельно ввиду того, что если создавать
+    #       сериализатор и проверять number через него - будет два обращения
+    #       к базе данных: на этапе валидации, на этапе обращения к объекту.
+    number: str = request.data.get('number', '')
+    try:
+        validate_cadastral_number(value=number)
+    except ValidationError as err:
+        return Response(
+            data={'number': err},
+            status=HTTP_400_BAD_REQUEST,
+        )
+    cadastral: CadastralNumber = get_object_or_404(
+        CadastralNumber,
+        number=number,
+    )
+    serializer: Serializer = CadastralSerializer(instance=cadastral)
+    return Response(
+        data=serializer.data,
+        status=HTTP_200_OK,
+    )
