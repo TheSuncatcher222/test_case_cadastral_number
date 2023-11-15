@@ -1,8 +1,10 @@
 from drf_spectacular.utils import inline_serializer, extend_schema
 from rest_framework import serializers, status
 
-from cadastral.models import CadastralNumber, LogsHistory
-from cadastral.validators import CADASTRAL_NUMBER_ERR, CADASTRAL_LAT_ERR, CADASTRAL_LON_ERR
+from cadastral.models import CadastralNumber
+from cadastral.validators import (
+    CADASTRAL_NUMBER_ERR, CADASTRAL_LAT_ERR, CADASTRAL_LON_ERR
+)
 from api.v1.serializers import CadastralSerializer, LogsHistorySerializer
 
 DEFAULT_404: str = 'Страница не найдена.'
