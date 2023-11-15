@@ -1,7 +1,6 @@
 from django.db.models import QuerySet
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
