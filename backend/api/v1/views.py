@@ -1,17 +1,23 @@
 from django.db.models import QuerySet
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 from api.v1.serializers import CadastralSerializer, LogsHistorySerializer
+from api.v1.schemas import (
+    EXTEND_SCHEMA_CHECK_PING, EXTEND_SCHEMA_GET_HISTORY,
+    EXTEND_SCHEMA_GET_QUERY, EXTEND_SCHEMA_GET_RESULT,
+)
 from backend.app_data import RESPONSE_DATA_API_AVAILABLE
 from cadastral.models import CadastralNumber, LogsHistory
 from cadastral.validators import validate_cadastral_number
 
 
+@EXTEND_SCHEMA_CHECK_PING
 @api_view(http_method_names=('POST',))
 def check_ping(request) -> Response:
     """Возвращает статус 200, если сервер успешно функционирует."""
@@ -21,8 +27,16 @@ def check_ping(request) -> Response:
     )
 
 
+@EXTEND_SCHEMA_GET_HISTORY
 @api_view(http_method_names=('GET',))
 def get_history(request) -> Response:
+    """
+    Предоставляет историю запросов по указанному кадастровому номеру:
+        - дата запроса
+        - данные запроса
+        - статус ответа
+        - данные ответа
+    """
     number: str = request.data.get('number', '')
     try:
         validate_cadastral_number(value=number)
@@ -37,6 +51,7 @@ def get_history(request) -> Response:
     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
+@EXTEND_SCHEMA_GET_QUERY
 @api_view(http_method_names=('POST',))
 def get_query(request) -> Response:
     """
@@ -66,6 +81,7 @@ def get_query(request) -> Response:
     )
 
 
+@EXTEND_SCHEMA_GET_RESULT
 @api_view(http_method_names=('GET',))
 def get_result(request) -> Response:
     """
