@@ -40,8 +40,29 @@ DATABASE_SQLITE: dict[str, dict[str, str]] = {
     }
 }
 
+HTTP_METHOD_NAME_MAX_LEN: int = 10
+
+RESPONSE_DATA_API_AVAILABLE: dict[str, str] = {'message': 'API функционирует.'}
+
+URL_PATH_MAX_LEN: int = 255
+
+"""Models data."""
+
+
+ADMIN_LIST_PER_PAGE: int = 15
+
+CADASTRAL_NUMBER_LEN: int = 16
+
 
 """Security data."""
 
 
 SECRET_KEY: str = os.getenv('SECRET_KEY')
+
+
+"""URL data."""
+
+
+PATH_API_V1: str = '/api/v1/'
+PATH_QUERY: str = f'{PATH_API_V1}query/'
+PATH_RESULT: str = f'{PATH_API_V1}result/'
