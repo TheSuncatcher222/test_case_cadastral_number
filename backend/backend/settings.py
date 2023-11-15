@@ -31,6 +31,7 @@ INSTALLED_APPS_DJANGO = [
 
 INSTALLED_APPS_THIRD_PARTY = [
     'rest_framework',
+    'drf_spectacular',
 ]
 
 INSTALLED_APPS_LOCAL = [
@@ -44,9 +45,19 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 ROOT_URLCONF = 'backend.urls'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Cadastral Number Test Case',
+    'DESCRIPTION': 'Test case for Antipoff IT',
+    'VERSION': '0.1.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": r'/api/',
+}
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
