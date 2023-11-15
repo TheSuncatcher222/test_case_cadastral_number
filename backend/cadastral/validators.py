@@ -16,7 +16,11 @@ CADASTRAL_LON_ERR: str = (
 
 
 def validate_string(value: str, pattern: str, err: str) -> None:
-    """Производит валидацию кадастрового номера."""
+    """
+    Производит валидацию строки по указанному паттерну.
+    Вызывает ValueError, если значение не соответствует.
+    Возвращает None.
+    """
     if not re.fullmatch(pattern=pattern, string=value):
         raise ValidationError(err)
     return
