@@ -1,4 +1,7 @@
+from datetime import timedelta
 import os
+
+from corsheaders.defaults import default_headers
 
 from backend.app_data import (
     BASE_DIR,
@@ -11,6 +14,36 @@ from backend.app_data import (
 
 
 DEBUG = True
+
+
+"""Celery settings."""
+
+
+CELERY_BROKER_URL = 'redis://cadastral_redis:6379/0'
+
+CELERY_RESULT_BACKEND = 'redis://cadastral_redis:6379/0'
+
+CELERY_TASK_TRACK_STARTED = True
+
+# INFO: установлено значение 5 минут, так как максимальный пинг сервера
+#       составляет 60 секунд, в каждой асинхронной задаче будет запрос
+#       на пакетное изменение (bulk_update) не более 5 объектов модели.
+# INFO: значение задается в секундах
+# INFO: сейчас на сервере указан пинг не более 10 секунд.
+CELERY_TASK_TIME_LIMIT = 10
+
+CELERY_TIMEZONE = 'Europe/Moscow'
+
+CELERY_BEAT_SCHEDULE = {
+    'validate_cadastral_numbers': {
+        'task': 'cadastral.tasks.validate_cadastral_numbers',
+        'schedule': timedelta(seconds=CELERY_TASK_TIME_LIMIT),
+    },
+}
+
+# INFO: показывает, сколько объектов кадастровых номеров
+#       должны обрабатываться в одной асинхронной группе.
+CHUNK_CELERY: int = 5
 
 
 """Django settings."""
@@ -31,7 +64,9 @@ INSTALLED_APPS_DJANGO = [
 
 INSTALLED_APPS_THIRD_PARTY = [
     'rest_framework',
+    'corsheaders',
     'drf_spectacular',
+    'django_celery_beat',
 ]
 
 INSTALLED_APPS_LOCAL = [
@@ -125,7 +160,19 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    *default_headers,
+    "access-control-allow-credentials",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8001',
+]
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
