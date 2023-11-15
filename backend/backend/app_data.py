@@ -63,6 +63,10 @@ SECRET_KEY: str = os.getenv('SECRET_KEY')
 """URL data."""
 
 
+EXTERNAL_SERVER_URL: str = (
+    'http://cadastral_external_server:8000/validate_cadastral/'
+)
+
 PATH_API_V1: str = '/api/v1/'
 PATH_QUERY: str = f'{PATH_API_V1}query/'
 PATH_RESULT: str = f'{PATH_API_V1}result/'
