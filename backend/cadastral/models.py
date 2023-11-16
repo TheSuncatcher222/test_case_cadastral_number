@@ -1,7 +1,8 @@
 from django.db import models
 
 from backend.app_data import (
-    CADASTRAL_NUMBER_LEN, HTTP_METHOD_NAME_MAX_LEN, URL_PATH_MAX_LEN,
+    CADASTRAL_NUMBER_LEN, CADASTRAL_NUMBER_ANY,
+    HTTP_METHOD_NAME_MAX_LEN, URL_PATH_MAX_LEN,
 )
 from cadastral.validators import (
     validate_cadastral_number,
@@ -39,7 +40,7 @@ class CadastralNumber(models.Model):
         verbose_name = 'Кадастровый номер'
         verbose_name_plural = 'Кадастровые номера'
 
-    def str(self):
+    def __str__(self):
         return self.number
 
 
@@ -67,7 +68,7 @@ class LogsHistory(models.Model):
     #       данные, указанные в HttpRequest.body, которые могут быть ошибочные.
     cadastral = models.CharField(
         verbose_name='Кадастровый номер',
-        max_length=CADASTRAL_NUMBER_LEN,
+        max_length=CADASTRAL_NUMBER_ANY,
     )
     datetime = models.DateTimeField(
         'Дата совершения запроса',
@@ -79,5 +80,5 @@ class LogsHistory(models.Model):
         verbose_name = 'HTTP запрос'
         verbose_name_plural = 'История HTTP запросов'
 
-    def str(self):
+    def __str__(self):
         return f'{self.method} {self.path}: {self.status_code}'

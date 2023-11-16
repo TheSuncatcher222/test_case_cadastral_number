@@ -55,7 +55,6 @@ def get_history(request) -> Response:
 def get_query(request) -> Response:
     """
     Создает запись в БД для модели CadastralNumber.
-    Создает задачу для Celery проверить статус созданного кадастрового номера.
     """
     # INFO: Согласно официальной документации:
     #       https://docs.djangoproject.com/en/4.2/ref/request-response/#httprequest-objects  # noqa(E303)
@@ -73,7 +72,6 @@ def get_query(request) -> Response:
     serializer: Serializer = CadastralSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
-    # TODO: добавить задачу для Celery отправить запрос на проверку статуса.
     return Response(
         data=serializer.data,
         status=status.HTTP_201_CREATED,

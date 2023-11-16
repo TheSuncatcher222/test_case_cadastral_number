@@ -53,6 +53,8 @@ ADMIN_LIST_PER_PAGE: int = 15
 
 CADASTRAL_NUMBER_LEN: int = 16
 
+CADASTRAL_NUMBER_ANY: int = 255
+
 
 """Security data."""
 

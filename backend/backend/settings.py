@@ -13,7 +13,7 @@ from backend.app_data import (
 """App settings."""
 
 
-DEBUG = True
+DEBUG = False
 
 
 """Celery settings."""
